@@ -1,40 +1,62 @@
+import { AppEnv } from "@/config/env";
 import "dotenv/config";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import mongoose from "mongoose"; // Imports Mongoose ORM.
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
+const MONGODB_URI = AppEnv.MONGODB_URI!;
+
+if (!MONGODB_URI) {
+  throw new Error(
+    "❌ Please define the MONGODB_URI environment variable in your .env.local",
+  );
 }
 
-const uri = process.env.MONGODB_URI;
-const options = {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+// 👇 Tell TypeScript that we're adding a custom global variable
+declare global {
+  var mongoose:
+    | {
+        conn: typeof mongoose | null;
+        promise: Promise<typeof mongoose> | null;
+      }
+    | undefined;
+}
+
+// A global cache to prevent and refuse multiple DB connections during hot reload (important in Next.js).
+let cached = global.mongoose as {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
 };
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
-
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
-  }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-// Export a module-scoped MongoClient. By doing this in a
-// separate module, the client can be shared across functions.
-export default clientPromise;
+/**
+ * Connects to MongoDB using Mongoose.
+ * Uses a global cached connection in dev mode to prevent multiple instances.
+ */
+export async function connectDB() {
+  if (cached.conn) {
+    // ✅ Already connected
+    // Returns the existing connection if already open.
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    // 🔌 If not connected, Establish new connection
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      dbName: "expense-tracker", // Ensures all collections are created inside your intended database.
+      bufferCommands: false, // Prevents Mongoose from queuing commands before the DB connects (helps catch errors early).
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+    console.log("✅ MongoDB connected successfully");
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error);
+    cached.promise = null;
+    throw error;
+  }
+
+  return cached.conn;
+}
