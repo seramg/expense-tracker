@@ -8,16 +8,8 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "format:all": "npm run lint:fix && prettier --write ."
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --max-warnings 0 ."
-    ],
-    "*.{json,css,scss,md,html,yml,yaml}": [
-      "prettier --write"
-    ]
+    "format:all": "npm run lint:fix && prettier --write .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.0",
