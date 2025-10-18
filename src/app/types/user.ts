@@ -11,3 +11,10 @@ export interface IUser {
   provider?: string; // for Google, etc.
   googleId?: string;
 }
+
+export interface IUserRef {
+  id: string;
+  name: string;
+  email?: string;
+  image?: string;
+}
