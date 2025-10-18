@@ -1,9 +1,7 @@
-import { getCookie } from "@/app/utils/cookies";
-import { CookieKeys } from "@/constants/app";
+import { getCookie } from '@/app/utils/cookies';
+import { CookieKeys } from '@/constants/app';
 
-const requestInterceptor = async (
-  config: RequestInit,
-): Promise<RequestInit> => {
+const requestInterceptor = async (config: RequestInit): Promise<RequestInit> => {
   const token = await getCookie(CookieKeys.TOKEN);
 
   const finalConfig: RequestInit = {

@@ -1,6 +1,6 @@
 // src/models/User.ts
-import mongoose, { Schema, Document } from "mongoose";
-import { IUser } from "../types/user";
+import mongoose, { Schema, Document } from 'mongoose';
+import { IUser } from '../types/user';
 
 type userSchemaType = IUser & Document;
 const userSchema = new Schema<userSchemaType>(
@@ -11,7 +11,7 @@ const userSchema = new Schema<userSchemaType>(
     phone: { type: String },
     isAdmin: { type: Boolean, default: false },
     image: { type: String },
-    provider: { type: String, default: "credentials" },
+    provider: { type: String, default: 'credentials' },
     googleId: { type: String, required: false },
   },
   { timestamps: true },
@@ -20,9 +20,9 @@ const userSchema = new Schema<userSchemaType>(
 let UserModel: mongoose.Model<IUser>;
 try {
   // Try to get the existing model from mongoose
-  UserModel = mongoose.model<IUser>("User");
+  UserModel = mongoose.model<IUser>('User');
 } catch {
   // If the model doesn't exist, define it
-  UserModel = mongoose.model<IUser>("User", userSchema);
+  UserModel = mongoose.model<IUser>('User', userSchema);
 }
 export default UserModel;

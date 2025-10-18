@@ -1,5 +1,5 @@
 export const AppConstants = {
-  authToken: "token",
+  authToken: 'token',
 } as const;
 export const CookieKeys = {
   TOKEN: AppConstants.authToken?.toString(),

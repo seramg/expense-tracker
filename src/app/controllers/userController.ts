@@ -1,7 +1,7 @@
 // src/controllers/userController.ts
-import { connectDB } from "@/lib/mongodb";
-import User from "../models/User";
-import { IUser } from "../types/user";
+import { connectDB } from '@/lib/mongodb';
+import User from '../models/User';
+import { IUser } from '../types/user';
 
 export async function getUserByEmail(email: string): Promise<IUser | null> {
   await connectDB();

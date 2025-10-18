@@ -1,4 +1,4 @@
-import { IUser } from "../types/user";
+import { IUser } from '../types/user';
 
 export const mapUser = (user: IUser | null): IUser | null => {
   if (!user) return null;

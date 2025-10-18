@@ -61,11 +61,8 @@ class FetchApi {
    * - Optional JWT header (if using token-based auth)
    * - Automatic no-store caching for sensitive endpoints
    */
-  async request<T>(
-    path: string,
-    requestConfig: FetchRequestConfig = {},
-  ): Promise<T> {
-    const { method = "GET", body, sensitive = false, ...rest } = requestConfig;
+  async request<T>(path: string, requestConfig: FetchRequestConfig = {}): Promise<T> {
+    const { method = 'GET', body, sensitive = false, ...rest } = requestConfig;
 
     const headers: HeadersInit = {
       ...this.apiConfig.headers,
@@ -78,8 +75,8 @@ class FetchApi {
       body,
       headers: headers,
       ...rest,
-      cache: sensitive ? "no-store" : (rest.cache ?? "force-cache"),
-      credentials: "include",
+      cache: sensitive ? 'no-store' : (rest.cache ?? 'force-cache'),
+      credentials: 'include',
     });
 
     let fetchBody: BodyInit | undefined;
@@ -118,7 +115,7 @@ class FetchApi {
 
   // HTTP methods
   get<T>(path: string, config: FetchRequestConfig = {}): Promise<IResponse<T>> {
-    return this.request<IResponse<T>>(path, { ...config, method: "GET" });
+    return this.request<IResponse<T>>(path, { ...config, method: 'GET' });
   }
 
   post<T, TBody>(
@@ -128,28 +125,21 @@ class FetchApi {
   ): Promise<IResponse<T>> {
     return this.request<IResponse<T>>(path, {
       ...config,
-      method: "POST",
+      method: 'POST',
       body: body as ReadableStream,
     });
   }
 
-  put<T, TBody>(
-    path: string,
-    body: TBody,
-    config: FetchRequestConfig = {},
-  ): Promise<IResponse<T>> {
+  put<T, TBody>(path: string, body: TBody, config: FetchRequestConfig = {}): Promise<IResponse<T>> {
     return this.request<IResponse<T>>(path, {
       ...config,
-      method: "PUT",
+      method: 'PUT',
       body: body as ReadableStream,
     });
   }
 
-  delete<T>(
-    path: string,
-    config: FetchRequestConfig = {},
-  ): Promise<IResponse<T>> {
-    return this.request<IResponse<T>>(path, { ...config, method: "DELETE" });
+  delete<T>(path: string, config: FetchRequestConfig = {}): Promise<IResponse<T>> {
+    return this.request<IResponse<T>>(path, { ...config, method: 'DELETE' });
   }
 }
 

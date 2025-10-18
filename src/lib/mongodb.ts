@@ -1,13 +1,11 @@
-import { AppEnv } from "@/config/env";
-import "dotenv/config";
-import mongoose from "mongoose"; // Imports Mongoose ORM.
+import { AppEnv } from '@/config/env';
+import 'dotenv/config';
+import mongoose from 'mongoose'; // Imports Mongoose ORM.
 
 const MONGODB_URI = AppEnv.MONGODB_URI!;
 
 if (!MONGODB_URI) {
-  throw new Error(
-    "❌ Please define the MONGODB_URI environment variable in your .env.local",
-  );
+  throw new Error('❌ Please define the MONGODB_URI environment variable in your .env.local');
 }
 
 // 👇 Tell TypeScript that we're adding a custom global variable
@@ -44,16 +42,16 @@ export async function connectDB() {
   if (!cached.promise) {
     // 🔌 If not connected, Establish new connection
     cached.promise = mongoose.connect(MONGODB_URI, {
-      dbName: "expense-tracker", // Ensures all collections are created inside your intended database.
+      dbName: 'expense-tracker', // Ensures all collections are created inside your intended database.
       bufferCommands: false, // Prevents Mongoose from queuing commands before the DB connects (helps catch errors early).
     });
   }
 
   try {
     cached.conn = await cached.promise;
-    console.log("✅ MongoDB connected successfully");
+    console.log('✅ MongoDB connected successfully');
   } catch (error) {
-    console.error("❌ MongoDB connection failed:", error);
+    console.error('❌ MongoDB connection failed:', error);
     cached.promise = null;
     throw error;
   }

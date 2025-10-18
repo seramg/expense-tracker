@@ -1,21 +1,15 @@
-import API from "@/services/api/api";
-import { IError, IResponse } from "@/services/api/fetch/fetch";
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import API from '@/services/api/api';
+import { IError, IResponse } from '@/services/api/fetch/fetch';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
 interface IUsePostQueryOptions<T> {
-  options?: Omit<
-    UseMutationOptions<IResponse<T>, IError, unknown, string[]>,
-    "mutationFn"
-  >;
+  options?: Omit<UseMutationOptions<IResponse<T>, IError, unknown, string[]>, 'mutationFn'>;
   config?: RequestInit;
   dependency?: string[];
   formData?: boolean;
 }
 
-export function usePostMutation<T>(
-  path: string,
-  props: IUsePostQueryOptions<T> = {},
-) {
+export function usePostMutation<T>(path: string, props: IUsePostQueryOptions<T> = {}) {
   const { options, config } = props;
 
   return useMutation<IResponse<T>, IError, unknown, string[]>({

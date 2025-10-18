@@ -1,13 +1,10 @@
-import {
-  getCookie as nextGetCookie,
-  deleteCookie as nextDeleteCookie,
-} from "cookies-next";
+import { getCookie as nextGetCookie, deleteCookie as nextDeleteCookie } from 'cookies-next';
 
 const isServer = typeof window === undefined;
 
 export const getCookie = async (name: string, options?: object) => {
   if (isServer) {
-    const { cookies } = await import("next/headers");
+    const { cookies } = await import('next/headers');
     const cookieValue = await cookies();
     const namedValue = cookieValue.get(name)?.value.toString();
     return namedValue;
@@ -19,7 +16,7 @@ export const getCookie = async (name: string, options?: object) => {
 
 export const deleteCookie = async (name: string, options?: object) => {
   if (isServer) {
-    const { cookies } = await import("next/headers");
+    const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     cookieStore.delete(name);
     return true;

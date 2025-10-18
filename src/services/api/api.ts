@@ -1,13 +1,13 @@
-import { AppEnv } from "@/config/env";
-import FetchApi from "./fetch/fetch";
-import requestInterceptor from "./interceptors/request";
-import errorInterceptor from "./interceptors/error";
-import responseInterceptor from "./interceptors/response";
+import { AppEnv } from '@/config/env';
+import FetchApi from './fetch/fetch';
+import requestInterceptor from './interceptors/request';
+import errorInterceptor from './interceptors/error';
+import responseInterceptor from './interceptors/response';
 
 const API = new FetchApi({
   baseUrl: AppEnv.API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
