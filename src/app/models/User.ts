@@ -1,6 +1,6 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from '../types/user';
+import { IUser } from '../../lib/types/user';
 
 type userSchemaType = IUser & Document;
 const userSchema = new Schema<userSchemaType>(

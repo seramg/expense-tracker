@@ -1,7 +1,7 @@
 // src/controllers/userController.ts
 import { connectDB } from '@/lib/mongodb';
 import User from '../models/User';
-import { IUser } from '../types/user';
+import { IUser } from '../../lib/types/user';
 import { UserValidator } from '@/lib/validations';
 
 export async function getUserByEmail(email: string): Promise<IUser | null> {

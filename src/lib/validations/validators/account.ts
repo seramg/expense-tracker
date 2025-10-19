@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { Messages } from '../messages';
-import { IAccount } from '@/app/types/account';
+import { IAccount } from '@/lib/types/account';
 
 export const AccountValidator = Yup.object({
   name: Yup.string().required(Messages.REQUIRED('Account Name')),

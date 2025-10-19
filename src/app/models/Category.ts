@@ -1,6 +1,6 @@
 // src/models/Category.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { ICategory } from '../types/category';
+import { ICategory } from '../../lib/types/category';
 
 type categorySchemaType = ICategory & Document;
 const categorySchema = new Schema<categorySchemaType>(

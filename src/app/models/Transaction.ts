@@ -1,6 +1,6 @@
 // src/models/Transaction.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { ITransaction } from '../types/transaction';
+import { ITransaction } from '../../lib/types/transaction';
 
 type transactionSchemaType = ITransaction & Document;
 const transactionSchema = new Schema<transactionSchemaType>(

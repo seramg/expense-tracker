@@ -1,6 +1,6 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { IAccount } from '../types/account';
+import { IAccount } from '../../lib/types/account';
 
 type accountSchemaType = IAccount & Document;
 const accountSchema = new Schema<accountSchemaType>(

@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { CategoryValidator } from './category';
 import { Messages } from '../messages';
-import { ICategory } from '@/app/types/category';
+import { ICategory } from '@/lib/types/category';
 import { UserValidator } from './user';
 
 export const TransactionValidator = Yup.object({

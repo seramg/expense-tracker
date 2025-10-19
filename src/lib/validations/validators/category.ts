@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { Messages } from '../messages';
-import { ICategory } from '@/app/types/category';
+import { ICategory } from '@/lib/types/category';
 export const CategoryValidator = Yup.object({
   name: Yup.string().required(Messages.REQUIRED('Category name')),
   type: Yup.mixed<ICategory['type']>()

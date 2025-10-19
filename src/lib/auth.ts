@@ -6,7 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createUser, getUserByEmail } from '@/app/controllers/userController';
-import { IUser, IUserRef } from '@/app/types/user';
+import { IUser, IUserRef } from '@/lib/types/user';
 import { AppEnv } from '@/config/env';
 
 interface Credentials {
