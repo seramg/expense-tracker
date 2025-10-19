@@ -7,7 +7,6 @@ const transactionSchema = new Schema<transactionSchemaType>(
   {
     merchant: { type: String, required: true },
     category: { type: Object, required: true },
-    type: { type: String, enum: ['credit', 'debit'], required: true },
     amount: { type: Number, required: true },
     date: { type: Date, required: true },
     createdBy: {
