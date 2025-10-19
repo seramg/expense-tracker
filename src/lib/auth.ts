@@ -6,7 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createUser, getUserByEmail } from '@/app/controllers/userController';
-import { IUser } from '@/app/types/user';
+import { IUser, IUserRef } from '@/app/types/user';
 import { AppEnv } from '@/config/env';
 
 interface Credentials {
@@ -70,7 +70,8 @@ export const authOptions: NextAuthOptions = {
             name: profile.name,
             email: profile.email,
             image: profile.image,
-            password: undefined, // Google users have no password
+            //
+            // password: undefined, // Google users have no password
             id: profile.sub,
             provider: 'google',
           });
@@ -89,13 +90,23 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user) {
-        token.user = user;
+        const userData = user as IUserRef;
+        token.user = {
+          name: userData.name,
+          image: userData.image,
+          email: userData.email,
+        };
       }
       return token;
     },
     async session({ session, token }) {
       if (token && token?.user) {
-        session.user = token.user as IUser;
+        const userData = token.user as IUserRef;
+        session.user = {
+          name: userData.name,
+          image: userData.image,
+          email: userData.email,
+        };
       }
       return session;
     },

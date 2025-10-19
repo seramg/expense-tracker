@@ -2,6 +2,7 @@
 import { connectDB } from '@/lib/mongodb';
 import User from '../models/User';
 import { IUser } from '../types/user';
+import { UserValidator } from '@/lib/validations';
 
 export async function getUserByEmail(email: string): Promise<IUser | null> {
   await connectDB();
@@ -10,7 +11,9 @@ export async function getUserByEmail(email: string): Promise<IUser | null> {
 
 export async function createUser(userData: Partial<IUser>) {
   await connectDB();
-  const user = new User(userData);
+  const validated = await UserValidator.validate(userData, { abortEarly: false });
+  console.log(validated);
+  const user = new User(validated);
   await user.save();
   return user;
 }
