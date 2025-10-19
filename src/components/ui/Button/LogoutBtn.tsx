@@ -2,6 +2,7 @@
 
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export const LogoutButton = () => {
   const router = useRouter();
@@ -12,8 +13,10 @@ export const LogoutButton = () => {
       await signOut({ redirect: false });
 
       // Optional: clear any local app state (if you stored custom tokens)
-      localStorage.removeItem('token');
+      // removing as we r not setting any token in the local storage
+      // localStorage.removeItem('token');
 
+      toast.success('Signed out successfully');
       // Redirect to homepage (or login)
       router.push('/');
     } catch (error) {
