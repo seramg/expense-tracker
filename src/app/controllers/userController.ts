@@ -36,7 +36,7 @@
 // ✅ Automatically reconnects if dropped
 // ✅ Handles concurrency & pooling under the hood
 
-import { PrismaClient, User } from '@/generated/prisma';
+import { PrismaClient } from '@/generated/prisma';
 import { Prisma } from '@/generated/prisma'; // gives you Prisma.UserCreateInput, etc.
 const prisma = new PrismaClient();
 

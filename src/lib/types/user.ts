@@ -2,14 +2,14 @@ export interface IUser {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  password?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
-  phone?: string;
+  phone?: string | null;
   isAdmin?: boolean;
-  image?: string;
+  image?: string | null;
   provider?: string; // for Google, etc.
-  googleId?: string;
+  googleId?: string | null;
 }
 
 export interface IUserRef {

@@ -67,9 +67,9 @@ export const authOptions: NextAuthOptions = {
         if (!dbUser) {
           // Create user if doesn't exist
           dbUser = await createUser({
-            name: profile.name,
-            email: profile.email,
-            image: profile.image,
+            name: profile.name || '',
+            email: profile.email || '',
+            image: profile.image || '',
             //
             // password: undefined, // Google users have no password
             id: profile.sub,
