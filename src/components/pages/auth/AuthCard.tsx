@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
-import { SignInForm } from '@/components/pages/auth/signIn';
-import { SignupForm } from '@/components/pages/auth/signUp/Form';
+import SignupForm from './signUp/Form';
+import SignInForm from './signIn/Form';
 
 export default function AuthCard() {
   const [isSignUp, setIsSignUp] = useState(false);

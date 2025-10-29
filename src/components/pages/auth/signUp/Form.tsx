@@ -17,7 +17,7 @@ const getFormSchema = Yup.object({
 
 type SignupFormData = Yup.InferType<typeof getFormSchema>;
 
-export const SignupForm = ({ toggle }: IAuthInfoProps) => {
+const SignupForm = ({ toggle }: IAuthInfoProps) => {
   const { register, handleSubmit, reset } = useForm({
     resolver: yupResolver(getFormSchema),
   });
@@ -91,3 +91,5 @@ export const SignupForm = ({ toggle }: IAuthInfoProps) => {
     </div>
   );
 };
+
+export default SignupForm;

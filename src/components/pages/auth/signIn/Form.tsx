@@ -19,7 +19,7 @@ const getFormSchema = Yup.object({
 });
 type SigninFormData = Yup.InferType<typeof getFormSchema>;
 
-export const SignInForm = ({ toggle }: IAuthInfoProps) => {
+const SignInForm = ({ toggle }: IAuthInfoProps) => {
   const router = useRouter();
   const {
     register,
@@ -132,3 +132,5 @@ export const SignInForm = ({ toggle }: IAuthInfoProps) => {
     </div>
   );
 };
+
+export default SignInForm;
