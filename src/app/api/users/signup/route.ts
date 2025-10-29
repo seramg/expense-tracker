@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
 import bcrypt from 'bcryptjs';
 import { createUser, getUserByEmail } from '@/app/controllers/userController';
 import { mapUser } from '@/app/utils/user';
@@ -23,8 +22,8 @@ export const POST = async (req: Request) => {
       );
     }
 
-    // ✅ Connect DB
-    await connectDB();
+    // // ✅ Connect DB
+    // await connectDB();
 
     const existingUser = await getUserByEmail(email);
     if (existingUser) {

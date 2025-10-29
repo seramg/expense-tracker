@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  credit
+  debit
+  transfer
+}
+
+enum AccountType {
+  bank
+  cash
+  wallet
+  credit
+}
+
+model User {
+  id       String  @id @default(uuid()) @map("_id")
+  name     String
+  email    String  @unique
+  password String?
+  phone    String?
+  isAdmin  Boolean @default(false)
+  image    String?
+  provider String  @default("credentials")
+  googleId String?
+
+  categories   Category[]
+  accounts     Account[]
+  transactions Transaction[] @relation("User")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Account {
+  id       String      @id @default(uuid()) @map("_id")
+  name     String
+  type     AccountType
+  balance  Float       @default(0)
+  currency String?
+  user     User        @relation(fields: [userId], references: [id])
+  userId   String
+
+  fromTransactions Transaction[] @relation("FromAccount")
+  toTransactions   Transaction[] @relation("ToAccount")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id     String          @id @default(uuid()) @map("_id")
+  name   String
+  type   TransactionType
+  user   User            @relation(fields: [userId], references: [id])
+  userId String
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id       String          @id @default(uuid()) @map("_id")
+  merchant String
+  amount   Float
+  date     DateTime
+  type     TransactionType
+
+  user   User   @relation("User", fields: [userId], references: [id], onDelete: Cascade)
+  userId String 
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  fromAccount   Account? @relation("FromAccount", fields: [fromAccountId], references: [id])
+  fromAccountId String?
+
+  toAccount   Account? @relation("ToAccount", fields: [toAccountId], references: [id])
+  toAccountId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

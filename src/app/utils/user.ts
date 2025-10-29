@@ -1,14 +1,13 @@
-import { IUser } from '../../lib/types/user';
+import { User } from '@/generated/prisma';
 
-export const mapUser = (user: IUser | null): IUser | null => {
+export const mapUser = (user: User): User | null => {
   if (!user) return null;
 
   return {
-    id: user.id?.toString(),
-    name: user.name,
-    email: user.email,
-    phone: user?.phone,
+    ...user,
+    password: null,
+    phone: null,
     isAdmin: user.isAdmin || false,
-    image: user?.image,
+    googleId: null,
   };
 };
