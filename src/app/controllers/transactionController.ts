@@ -12,16 +12,10 @@ export async function createTransaction(transactionData: Prisma.TransactionCreat
       category: true,
       fromAccount: true,
       toAccount: true,
+      //   🟢 createdAt & updatedAt are already returned automatically
     },
   });
   return transaction;
 }
 
 // ✅ Update transaction
-export async function updateUser(id: string, userData: Prisma.UserUpdateInput) {
-  const updatedUser = await prisma.user.update({
-    where: { id },
-    data: userData,
-  });
-  return updatedUser;
-}
