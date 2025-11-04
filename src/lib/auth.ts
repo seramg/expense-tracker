@@ -1,5 +1,5 @@
 // src/auth.ts
-import { NextAuthOptions, Session } from 'next-auth';
+import { DefaultSession, NextAuthOptions, Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import GoogleProvider from 'next-auth/providers/google';
@@ -13,6 +13,23 @@ interface Credentials {
   email: string;
   password: string;
 }
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession['user'];
+  }
+
+  interface User {
+    id: string;
+  }
+
+  interface JWT {
+    id: string;
+  }
+}
+
 export interface MySession extends Session {
   user: IUser;
 }
@@ -92,6 +109,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         const userData = user as IUserRef;
         token.user = {
+          id: userData.id,
           name: userData.name,
           image: userData.image,
           email: userData.email,
@@ -103,6 +121,7 @@ export const authOptions: NextAuthOptions = {
       if (token && token?.user) {
         const userData = token.user as IUserRef;
         session.user = {
+          id: userData.id,
           name: userData.name,
           image: userData.image,
           email: userData.email,

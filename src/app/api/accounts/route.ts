@@ -1,5 +1,7 @@
 import { createAccount, getAllAccounts } from '@/app/controllers/accountController';
 import { Account } from '@/generated/prisma';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
@@ -9,9 +11,15 @@ export const POST = async (req: Request) => {
     }
     // ✅ Parse the body (req.body doesn’t exist in App Router)
     const body: Account = await req.json();
-    const { name, type, balance, currency, userId } = body;
+    const { name, type, balance, currency } = body;
 
-    if (!name || !type || !userId) {
+    const session = await getServerSession(authOptions);
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    // ✅ get user ID from server token
+    const userId = session?.user?.id; // or session.user.id if configured
+
+    if (!name || !type) {
       return NextResponse.json(
         { message: 'Missing required fields', status: 400 },
         { status: 400 },
