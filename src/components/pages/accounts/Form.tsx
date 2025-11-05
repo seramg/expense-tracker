@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AccountValidator } from '@/lib/validations/validators/account';
 import { useForm } from 'react-hook-form';
-import { usePostMutation } from '@/hooks/reactQuery/useMutation';
+import { usePostMutation } from '@/hooks/reactQuery/usePostMutation';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -19,13 +19,7 @@ import { Button } from '@/components/ui/Button/button';
 type AccountFormData = Yup.InferType<typeof AccountValidator>;
 
 const AccountForm = () => {
-  const [isModal, setIsModal] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, reset } = useForm({
     resolver: yupResolver(AccountValidator),
   });
 
@@ -48,8 +42,8 @@ const AccountForm = () => {
   return (
     <div className='flex w-full items-center justify-center'>
       <Dialog>
-        <form onSubmit={handleSubmit(submitHandler)} className='space-y-3'>
-          <DialogTrigger asChild onClick={() => setIsModal(true)}>
+        <form className='space-y-3'>
+          <DialogTrigger asChild>
             <Button variant='outline' className='cursor-pointer'>
               Add Account
             </Button>
@@ -96,6 +90,7 @@ const AccountForm = () => {
               type='submit'
               disabled={isPending}
               className='w-full rounded bg-green-500 py-2 text-white transition hover:bg-green-600'
+              onClick={handleSubmit(submitHandler)}
             >
               {isPending ? 'Saving...' : 'Save Account'}
             </button>

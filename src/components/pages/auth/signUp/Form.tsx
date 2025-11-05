@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { usePostMutation } from '@/hooks/reactQuery/useMutation';
+import { usePostMutation } from '@/hooks/reactQuery/usePostMutation';
 import IAuthInfoProps from '../authInfo.interface';
 import { toast } from 'sonner';
 import * as Yup from 'yup';
