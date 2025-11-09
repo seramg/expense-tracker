@@ -23,7 +23,8 @@
 //   const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
 //   return updatedUser;
 // }
-
+import prisma from '@/lib/prisma/prisma';
+import { IUser } from '@/lib/types/user';
 /*
  * Mongoose is a stateful driver for MongoDB
  * It doesn’t automatically maintain a global connection pool
@@ -35,11 +36,6 @@
 // ✅ Keeps them alive between queries
 // ✅ Automatically reconnects if dropped
 // ✅ Handles concurrency & pooling under the hood
-
-import { PrismaClient } from '@/generated/prisma';
-import { Prisma } from '@/generated/prisma'; // gives you Prisma.UserCreateInput, etc.
-const prisma = new PrismaClient();
-
 // ✅ Get user by email
 export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
@@ -48,7 +44,7 @@ export async function getUserByEmail(email: string) {
 }
 
 // ✅ Create user
-export async function createUser(userData: Prisma.UserCreateInput) {
+export async function createUser(userData: IUser) {
   // Prisma validates this based on your schema
   const user = await prisma.user.create({
     data: userData,
@@ -57,7 +53,7 @@ export async function createUser(userData: Prisma.UserCreateInput) {
 }
 
 // ✅ Update user
-export async function updateUser(id: string, userData: Prisma.UserUpdateInput) {
+export async function updateUser(id: string, userData: IUser) {
   const updatedUser = await prisma.user.update({
     where: { id },
     data: userData,

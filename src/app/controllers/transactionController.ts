@@ -1,6 +1,5 @@
-import { PrismaClient } from '@/generated/prisma';
-import { Prisma } from '@/generated/prisma'; // gives you Prisma.UserCreateInput, etc.
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma/prisma';
+import { Prisma } from '@prisma/client';
 
 // ✅ Create transaction
 export async function createTransaction(transactionData: Prisma.TransactionCreateInput) {

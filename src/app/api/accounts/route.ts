@@ -1,7 +1,7 @@
 import { createAccount, getAllAccounts } from '@/app/controllers/accountController';
 import { getUserByEmail } from '@/app/controllers/userController';
-import { Account } from '@/generated/prisma';
 import { authOptions } from '@/lib/auth';
+import { Account } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -33,13 +33,15 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const account = await createAccount({
-      name,
-      type,
-      balance: balance ? Number(balance) : 0,
-      currency: currency || 'INR',
-      user: { connect: { id: user.id } }, // ✅ use ID internally only here
-    });
+    const account = await createAccount(
+      {
+        name,
+        type,
+        balance: balance ? Number(balance) : 0,
+        currency: currency || 'INR',
+      },
+      user.id,
+    ); // ✅ use ID internally only here
 
     return NextResponse.json(
       { message: 'Account created successfully', data: account, status: 201 },

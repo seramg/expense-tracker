@@ -1,14 +1,15 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
 import { IAccount } from '../../lib/types/account';
+import { AccountType, CurrencyType } from '@prisma/client';
 
 type accountSchemaType = IAccount & Document;
 const accountSchema = new Schema<accountSchemaType>(
   {
     name: { type: String, required: true },
-    type: { type: String, enum: ['bank', 'cash', 'wallet', 'credit'], required: true },
+    type: { type: String, enum: AccountType, required: true },
     balance: { type: Number, required: true, default: 0 },
-    currency: { type: String, default: 'INR' },
+    currency: { type: String, enum: CurrencyType, default: 'INR' },
     createdBy: {
       id: { type: String, required: true },
       name: { type: String, required: true },

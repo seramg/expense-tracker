@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -25,6 +24,11 @@ enum AccountType {
   cash
   wallet
   credit
+}
+
+enum CurrencyType {
+  INR
+  USD
 }
 
 model User {
@@ -53,7 +57,7 @@ model Account {
   name     String
   type     AccountType
   balance  Float       @default(0)
-  currency String?
+  currency CurrencyType @default(INR)
   user     User        @relation(fields: [userId], references: [id])
   userId   String
 

@@ -1,12 +1,11 @@
-import { PrismaClient } from '@/generated/prisma';
-import { Prisma } from '@/generated/prisma'; // gives you Prisma.UserCreateInput, etc.
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma/prisma';
+import { IAccount } from '@/lib/types/account';
 
 // ✅ Create account
-export async function createAccount(accountData: Prisma.AccountCreateInput) {
+export async function createAccount(accountData: IAccount, userId?: string) {
   // Prisma validates this based on your schema
   const account = await prisma.account.create({
-    data: accountData,
+    data: { ...accountData, user: { connect: { id: userId } } },
     include: {
       user: true,
       fromTransactions: true,

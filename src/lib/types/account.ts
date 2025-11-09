@@ -1,9 +1,10 @@
+import { AccountType, CurrencyType } from '@prisma/client';
 import { IUserRef } from './user';
 
 export interface IAccount {
   name: string;
-  type: 'bank' | 'cash' | 'wallet' | 'credit';
+  type: AccountType;
   balance?: number;
-  currency?: string;
+  currency: CurrencyType;
   createdBy?: IUserRef;
 }

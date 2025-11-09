@@ -1,4 +1,4 @@
-import { User } from '@/generated/prisma';
+import { User } from '@prisma/client';
 
 export const mapUser = (user: User): User | null => {
   if (!user) return null;

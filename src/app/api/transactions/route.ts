@@ -1,5 +1,5 @@
 import { createTransaction } from '@/app/controllers/transactionController';
-import { Transaction } from '@/generated/prisma';
+import { Transaction } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
