@@ -14,26 +14,6 @@ interface Credentials {
   password: string;
 }
 
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string;
-    } & DefaultSession['user'];
-  }
-
-  interface User {
-    id: string;
-  }
-
-  interface JWT {
-    id: string;
-  }
-}
-
-export interface MySession extends Session {
-  user: IUser;
-}
-
 export const authOptions: NextAuthOptions = {
   secret: AppEnv.AUTH_SECRET,
   session: { strategy: 'jwt' },
@@ -95,7 +75,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Override the user object returned to JWT
-        user.id = dbUser.id.toString();
         user.email = dbUser.email;
         user.name = dbUser.name;
         // user.provider = dbUser.provider || "google";
@@ -107,13 +86,8 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user) {
-        const userData = user as IUserRef;
-        token.user = {
-          id: userData.id,
-          name: userData.name,
-          image: userData.image,
-          email: userData.email,
-        };
+        const { name, email, image } = user as IUserRef;
+        token.user = { name, email, image };
       }
       return token;
     },
@@ -121,10 +95,9 @@ export const authOptions: NextAuthOptions = {
       if (token && token?.user) {
         const userData = token.user as IUserRef;
         session.user = {
-          id: userData.id,
           name: userData.name,
-          image: userData.image,
           email: userData.email,
+          image: userData.image,
         };
       }
       return session;

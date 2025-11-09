@@ -1,4 +1,5 @@
 import { createAccount, getAllAccounts } from '@/app/controllers/accountController';
+import { getUserByEmail } from '@/app/controllers/userController';
 import { Account } from '@/generated/prisma';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
@@ -13,11 +14,17 @@ export const POST = async (req: Request) => {
     const body: Account = await req.json();
     const { name, type, balance, currency } = body;
 
+    // ✅ get user from session (token-based)
     const session = await getServerSession(authOptions);
-    if (!session) return new Response('Unauthorized', { status: 401 });
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
 
-    // ✅ get user ID from server token
-    const userId = session?.user?.id; // or session.user.id if configured
+    // ✅ fetch the user from DB based on email (since we removed id)
+    const user = await getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
 
     if (!name || !type) {
       return NextResponse.json(
@@ -31,7 +38,7 @@ export const POST = async (req: Request) => {
       type,
       balance: balance ? Number(balance) : 0,
       currency: currency || 'INR',
-      user: { connect: { id: userId } },
+      user: { connect: { id: user.id } }, // ✅ use ID internally only here
     });
 
     return NextResponse.json(
@@ -49,14 +56,19 @@ export const GET = async (req: Request) => {
     if (req.method !== 'GET') {
       return NextResponse.json({ message: 'Method not allowed', status: 405 }, { status: 405 });
     }
-    // ✅ Parse the searchParams to get user id
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
-    if (!userId) {
-      return NextResponse.json({ message: 'userId is required' }, { status: 400 });
+
+    // ✅ get logged-in user session
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    // ✅ look up the user from DB
+    const user = await getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    const accounts = await getAllAccounts(userId);
+    const accounts = await getAllAccounts(user.id);
 
     return NextResponse.json(
       { message: 'All accounts fetched successfully', data: accounts, status: 201 },

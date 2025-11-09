@@ -12,7 +12,7 @@ export default async function AccountPage() {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center gap-5 bg-gray-50'>
       <AccountForm />
-      <AccountsList userId={session.user.id} />
+      <AccountsList />
     </div>
   );
 }
