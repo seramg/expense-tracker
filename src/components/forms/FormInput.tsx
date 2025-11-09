@@ -2,9 +2,10 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-interface FormInputProps {
+interface FormInputProps extends React.ComponentProps<'input'> {
   name: string;
   label: string;
   placeholder?: string;
@@ -18,9 +19,16 @@ const FormInput = ({
   placeholder,
   type = 'text',
   required = false,
+  ...inputProps
 }: FormInputProps) => {
-  const { control } = useFormContext();
+  const { control, formState, getValues } = useFormContext();
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  const handleFocus = () => {
+    if (inputRef.current) {
+      if (getValues(name) === formState?.defaultValues?.[name]) inputRef.current.select();
+    }
+  };
   return (
     <FormField
       control={control}
@@ -29,7 +37,15 @@ const FormInput = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input {...field} required={required} type={type} placeholder={placeholder} />
+            <Input
+              {...field}
+              {...inputProps}
+              ref={inputRef}
+              onFocus={handleFocus}
+              required={required}
+              type={type}
+              placeholder={placeholder}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
