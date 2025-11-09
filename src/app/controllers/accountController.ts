@@ -25,3 +25,11 @@ export async function getAllAccounts(userId?: string) {
   });
   return accounts;
 }
+
+//✅ Find a account
+export async function getAccount(accountName?: string) {
+  const account = await prisma.account.findFirst({
+    where: { name: accountName },
+  });
+  return account;
+}

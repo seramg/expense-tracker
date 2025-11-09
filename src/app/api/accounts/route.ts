@@ -1,4 +1,4 @@
-import { createAccount, getAllAccounts } from '@/app/controllers/accountController';
+import { createAccount, getAccount, getAllAccounts } from '@/app/controllers/accountController';
 import { getUserByEmail } from '@/app/controllers/userController';
 import { authOptions } from '@/lib/auth';
 import { Account } from '@prisma/client';
@@ -29,6 +29,17 @@ export const POST = async (req: Request) => {
     if (!name || !type) {
       return NextResponse.json(
         { message: 'Missing required fields', status: 400 },
+        { status: 400 },
+      );
+    }
+
+    // ✅ check if account with same name exist, if so dont create a new one and throw error for this
+    const accountFromDB = await getAccount(name);
+    if (accountFromDB) {
+      return NextResponse.json(
+        {
+          message: 'Account with the same name already exists',
+        },
         { status: 400 },
       );
     }
