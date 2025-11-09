@@ -22,29 +22,42 @@ import { CURRENCY_TYPES, ACCOUNT_TYPES } from '@/constants/accounts';
 type AccountFormData = Yup.InferType<typeof AccountValidator>;
 
 const AccountForm = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const form = useForm({
     resolver: yupResolver(AccountValidator),
+    defaultValues: {
+      name: '',
+      balance: 0,
+      currency: 'INR',
+    },
   });
-  const { register, handleSubmit, reset } = form;
-  const { mutate, error, isError, isPending } = usePostMutation<AccountFormData>('/api/accounts');
+  const { handleSubmit, reset } = form;
+  const { mutate, isPending } = usePostMutation<AccountFormData>('/api/accounts');
 
   const submitHandler = (data: AccountFormData) => {
     mutate(data, {
       onSuccess() {
         toast.success('Account Created!');
+        reset();
+        setIsDialogOpen(false);
       },
       onError(err) {
         toast.error(err?.message || 'Failed to create account');
-      },
-      onSettled() {
-        reset();
       },
     });
   };
 
   return (
     <div className='flex w-full items-center justify-center'>
-      <Dialog>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            reset();
+          }
+          setIsDialogOpen(open);
+        }}
+      >
         <FormProvider {...form}>
           <form className='space-y-3'>
             <DialogTrigger asChild>
@@ -62,7 +75,7 @@ const AccountForm = () => {
                 label='Account Name'
                 required
               />
-              <FormSelect name='type' label='Bank' required options={ACCOUNT_TYPES} />
+              <FormSelect name='type' label='Account Type' required options={ACCOUNT_TYPES} />
               <FormInput
                 type='number'
                 name='balance'
@@ -76,23 +89,24 @@ const AccountForm = () => {
                 options={CURRENCY_TYPES}
               />
 
-              {isError && <p className='text-sm text-red-500'>{error?.message}</p>}
-
-              <button
+              <Button
                 type='submit'
                 disabled={isPending}
-                className='w-full rounded bg-green-500 py-2 text-white transition hover:bg-green-600'
+                color='green'
+                className='w-full'
                 onClick={handleSubmit(submitHandler)}
               >
                 {isPending ? 'Saving...' : 'Save Account'}
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type='button'
-                className='w-full rounded bg-gray-300 py-2 text-gray-800 hover:bg-gray-400'
+                color='gray'
+                className='w-full'
+                onClick={() => setIsDialogOpen(false)}
               >
                 Cancel
-              </button>
+              </Button>
             </DialogContent>
           </form>
         </FormProvider>
