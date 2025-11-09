@@ -3,6 +3,7 @@
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Button } from '../button';
 
 export const LogoutButton = () => {
   const router = useRouter();
@@ -25,11 +26,11 @@ export const LogoutButton = () => {
   };
 
   return (
-    <button
+    <Button
       onClick={handleLogout}
       className='cursor-pointer rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600'
     >
       Logout
-    </button>
+    </Button>
   );
 };
