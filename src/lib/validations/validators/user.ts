@@ -22,3 +22,7 @@ export const UserValidator = Yup.object({
   image: Yup.string().url().optional(),
   provider: Yup.string().optional(),
 });
+
+export const SignupValidator = UserValidator.pick(['name', 'email', 'password']);
+
+export const SigninValidator = UserValidator.pick(['email', 'password']);

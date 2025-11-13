@@ -1,29 +1,24 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { usePostMutation } from '@/hooks/reactQuery/usePostMutation';
 import IAuthInfoProps from '../authInfo.interface';
 import { toast } from 'sonner';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import FormInput from '@/components/forms/FormInput';
+import { Button } from '@/components/ui/button';
+import { SignupValidator } from '@/lib/validations';
 
-const getFormSchema = Yup.object({
-  name: Yup.string().min(3).required('Name is required'),
-  email: Yup.string().email().required('Email is required'),
-  password: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-});
-
-type SignupFormData = Yup.InferType<typeof getFormSchema>;
+type SignupFormData = Yup.InferType<typeof SignupValidator>;
 
 const SignupForm = ({ toggle }: IAuthInfoProps) => {
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(getFormSchema),
+  const form = useForm({
+    resolver: yupResolver(SignupValidator),
   });
-
+  const { handleSubmit, reset } = form;
   const mutation = usePostMutation<SignupFormData>('/api/users/signup');
-  const { mutate, error, isError, isPending } = mutation;
+  const { mutate, isPending } = mutation;
 
   const onSubmitHandler = (data: SignupFormData) => {
     mutate(data, {
@@ -43,50 +38,38 @@ const SignupForm = ({ toggle }: IAuthInfoProps) => {
   };
 
   return (
-    <div className='w-80 rounded-lg border bg-white p-6 shadow-lg'>
-      <h2 className='mb-6 text-center text-2xl font-bold text-gray-800'>Sign Up</h2>
+    <div className='w-80 px-6'>
+      <FormProvider {...form}>
+        <form className='space-y-3'>
+          <FormInput name='name' placeholder='Enter Full Name' label='Full Name' required />
+          <FormInput name='email' type='email' placeholder='Enter Email' label='Email' required />
+          <FormInput
+            name='password'
+            type='password'
+            placeholder='Enter Password'
+            label='Password'
+            required
+          />
 
-      <form onSubmit={handleSubmit(onSubmitHandler)} className='space-y-3'>
-        <input
-          type='text'
-          placeholder='Full Name'
-          className='w-full rounded border p-2 focus:ring focus:ring-blue-300 focus:outline-none'
-          {...register('name')}
-          required
-        />
-
-        <input
-          type='email'
-          placeholder='Email'
-          className='w-full rounded border p-2 focus:ring focus:ring-blue-300 focus:outline-none'
-          {...register('email')}
-          required
-        />
-
-        <input
-          type='password'
-          placeholder='Password'
-          className='w-full rounded border p-2 focus:ring focus:ring-blue-300 focus:outline-none'
-          {...register('password')}
-          required
-        />
-
-        {isError && <p className='text-sm text-red-500'>{error.message}</p>}
-
-        <button
-          type='submit'
-          disabled={isPending}
-          className='w-full rounded bg-green-500 py-2 text-white transition hover:bg-green-600'
-        >
-          {isPending ? 'Signing up...' : 'Sign Up'}
-        </button>
-      </form>
-
+          <Button
+            type='submit'
+            disabled={isPending}
+            color='green'
+            className='w-full'
+            onClick={handleSubmit(onSubmitHandler)}
+          >
+            {isPending ? 'Signing up...' : 'Sign Up'}
+          </Button>
+        </form>
+      </FormProvider>
       <p className='mt-4 text-center text-sm'>
         Already have an account?{' '}
-        <button type='button' onClick={toggle} className='text-blue-600 hover:underline'>
+        <Button
+          onClick={toggle}
+          className='cursor-pointer bg-transparent p-1 text-blue-600 hover:bg-transparent hover:underline'
+        >
           Sign in
-        </button>
+        </Button>
       </p>
     </div>
   );
