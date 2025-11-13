@@ -10,11 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { IOptions } from './forms.interface';
+import Image from 'next/image';
 
 interface FormSelectProps {
   name: string;
   label: string;
-  options: string[];
+  options: IOptions[];
   placeholder?: string;
   required?: boolean;
   labelValue?: string;
@@ -45,8 +47,18 @@ const FormSelect = ({
                 <SelectGroup>
                   <SelectLabel>{labelValue || `Select ${label}`}</SelectLabel>
                   {options.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.substring(1)}
+                    <SelectItem key={option.value} value={option.value} className='flex !gap-2'>
+                      {option.icon && (
+                        <div className='relative h-4 w-4'>
+                          <Image
+                            src={option.icon}
+                            alt={option.label}
+                            fill
+                            className='object-contain'
+                          />
+                        </div>
+                      )}
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectGroup>

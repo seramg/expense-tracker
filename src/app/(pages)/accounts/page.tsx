@@ -1,7 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import AccountForm from '@/components/pages/accounts/Form';
 import AccountsList from '@/components/pages/accounts/List';
 
 export default async function AccountPage() {
@@ -10,8 +9,7 @@ export default async function AccountPage() {
   // Redirect if already logged in
   if (!session) redirect('/dashboard');
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center gap-5 bg-gray-50'>
-      <AccountForm />
+    <div className='m-20 min-h-[calc(100vh-10rem)] gap-5 rounded-2xl bg-gray-50 p-10'>
       <AccountsList />
     </div>
   );

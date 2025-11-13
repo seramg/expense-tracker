@@ -23,7 +23,7 @@ enum AccountType {
   bank
   cash
   wallet
-  credit
+  card
 }
 
 enum CurrencyType {
