@@ -1,9 +1,8 @@
+import { TransactionType } from '@prisma/client';
 import { IUserRef } from './user';
 
 export interface ICategory {
   name: string;
-  type: 'credit' | 'debit' | 'transaction';
+  type: TransactionType;
   createdBy?: IUserRef;
-  createdAt: Date;
-  updatedAt: Date;
 }
