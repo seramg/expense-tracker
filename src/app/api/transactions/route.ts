@@ -1,5 +1,8 @@
-import { createTransaction } from '@/app/controllers/transactionController';
+import { createTransaction, getAllTransactions } from '@/app/controllers/transactionController';
+import { getUserByEmail } from '@/app/controllers/userController';
+import authOptions from '@/lib/auth';
 import { Transaction } from '@prisma/client';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
@@ -9,25 +12,37 @@ export const POST = async (req: Request) => {
     }
     // ✅ Parse the body (req.body doesn’t exist in App Router)
     const body: Transaction = await req.json();
-    const { merchant, amount, date, type, userId, categoryId, fromAccountId, toAccountId } = body;
+    const { merchant, amount, date, categoryId, fromAccountId, toAccountId } = body;
 
-    if (!merchant || !amount || !date || !type || !categoryId || !userId) {
+    // ✅ get user from session (token-based)
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    // ✅ fetch the user from DB based on email (since we removed id)
+    const user = await getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    if (!merchant || !amount || !date || !categoryId || !fromAccountId || !toAccountId) {
       return NextResponse.json(
         { message: 'Missing required fields', status: 400 },
         { status: 400 },
       );
     }
 
-    const transaction = await createTransaction({
-      merchant,
-      amount: parseFloat(amount.toString()),
-      date: new Date(date),
-      type,
-      user: { connect: { id: userId } },
-      category: { connect: { id: categoryId } },
-      ...(fromAccountId && { fromAccount: { connect: { id: fromAccountId } } }),
-      ...(toAccountId && { toAccount: { connect: { id: toAccountId } } }),
-    });
+    const transaction = await createTransaction(
+      {
+        merchant,
+        amount: parseFloat(amount.toString()),
+        date: new Date(date),
+        fromAccountId,
+        toAccountId,
+        categoryId,
+      },
+      user.id,
+    );
 
     return NextResponse.json(
       { message: 'Transaction created successfully', data: transaction },
@@ -36,5 +51,51 @@ export const POST = async (req: Request) => {
   } catch (error) {
     console.error('Error creating transaction:', error);
     return NextResponse.json({ message: 'Internal server error', status: 500 }, { status: 500 });
+  }
+};
+
+export const GET = async (req: Request) => {
+  try {
+    if (req.method !== 'GET') {
+      return NextResponse.json(
+        {
+          message: 'Method not allowed',
+          status: 405,
+        },
+        { status: 405 },
+      );
+    }
+
+    // ✅ get logged-in user session
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ✅ look up the user from DB
+    const user = await getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    const transactions = await getAllTransactions(user.id);
+
+    return NextResponse.json(
+      {
+        message: 'All Transactions fetched successfully',
+        data: transactions,
+        status: 201,
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    return NextResponse.json(
+      {
+        message: 'Internal server error',
+        status: 500,
+      },
+      { status: 500 },
+    );
   }
 };

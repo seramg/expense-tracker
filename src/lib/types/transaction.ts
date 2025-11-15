@@ -1,10 +1,8 @@
-import { ICategory } from './category';
-import { IUserRef } from './user';
-
 export interface ITransaction {
-  merchant?: string;
-  category?: ICategory;
-  amount?: number;
-  date?: Date;
-  createdBy?: IUserRef;
+  merchant: string;
+  amount: number;
+  date: Date;
+  categoryId?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
 }

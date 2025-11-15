@@ -1,20 +1,44 @@
 import prisma from '@/lib/prisma/prisma';
-import { Prisma } from '@prisma/client';
+import { ITransaction } from '@/lib/types/transaction';
 
 // ✅ Create transaction
-export async function createTransaction(transactionData: Prisma.TransactionCreateInput) {
+export async function createTransaction(transactionData: ITransaction, userId?: string) {
   // Prisma validates this based on your schema
   const transaction = await prisma.transaction.create({
-    data: transactionData,
+    data: {
+      merchant: transactionData.merchant,
+      amount: transactionData.amount,
+      date: transactionData.date,
+
+      user: { connect: { id: userId } },
+
+      category: { connect: { id: transactionData.categoryId } },
+
+      fromAccount: transactionData.fromAccountId
+        ? { connect: { id: transactionData.fromAccountId } }
+        : undefined,
+
+      toAccount: transactionData.toAccountId
+        ? { connect: { id: transactionData.toAccountId } }
+        : undefined,
+    },
     include: {
       user: true,
       category: true,
       fromAccount: true,
       toAccount: true,
-      //   🟢 createdAt & updatedAt are already returned automatically
     },
   });
+
   return transaction;
 }
 
-// ✅ Update transaction
+// ✅ Get all transaction
+export async function getAllTransactions(userId?: string) {
+  // Prisma validates this based on your schema
+  const transactions = await prisma.transaction.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  });
+  return transactions;
+}

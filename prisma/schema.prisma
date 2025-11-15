@@ -86,7 +86,6 @@ model Transaction {
   merchant String
   amount   Float
   date     DateTime
-  type     TransactionType
 
   user   User   @relation("User", fields: [userId], references: [id], onDelete: Cascade)
   userId String 
