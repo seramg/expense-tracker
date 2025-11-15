@@ -1,7 +1,7 @@
 import { createAccount, getAccount, getAllAccounts } from '@/app/controllers/accountController';
 import { getUserByEmail } from '@/app/controllers/userController';
 import { authOptions } from '@/lib/auth';
-import { Account } from '@prisma/client';
+import { Account, CurrencyType } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -49,7 +49,7 @@ export const POST = async (req: Request) => {
         name,
         type,
         balance: balance ? Number(balance) : 0,
-        currency: currency || 'INR',
+        currency: currency || CurrencyType.INR,
       },
       user.id,
     ); // ✅ use ID internally only here

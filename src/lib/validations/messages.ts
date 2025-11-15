@@ -11,5 +11,6 @@ export const Messages = {
   INVALID_DATE: 'Please enter a valid date',
   INVALID_TYPE: 'Invalid type value',
   INVALID_CATEGORY: 'Invalid category',
+  INVALID_CATEGORY_TYPE: 'Invalid category type',
   INVALID_ACCOUNT: 'Invalid account',
 };

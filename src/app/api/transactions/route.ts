@@ -1,7 +1,7 @@
 import { createTransaction, getAllTransactions } from '@/app/controllers/transactionController';
 import { getUserByEmail } from '@/app/controllers/userController';
 import authOptions from '@/lib/auth';
-import { Transaction } from '@prisma/client';
+import { Transaction, TransactionType } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ export const POST = async (req: Request) => {
     }
     // ✅ Parse the body (req.body doesn’t exist in App Router)
     const body: Transaction = await req.json();
-    const { merchant, amount, date, categoryId, fromAccountId, toAccountId } = body;
+    const { merchant, amount, currency, categoryId, fromAccountId, toAccountId, type } = body;
 
     // ✅ get user from session (token-based)
     const session = await getServerSession(authOptions);
@@ -25,21 +25,51 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    if (!merchant || !amount || !date || !categoryId || !fromAccountId || !toAccountId) {
+    if (!merchant || !amount || !categoryId || !currency || !type) {
       return NextResponse.json(
         { message: 'Missing required fields', status: 400 },
         { status: 400 },
       );
     }
 
+    if (type === TransactionType.credit) {
+      if (!toAccountId) {
+        return NextResponse.json(
+          { message: 'Missing to account field', status: 400 },
+          { status: 400 },
+        );
+      }
+    } else if (type === TransactionType.debit) {
+      if (!fromAccountId) {
+        return NextResponse.json(
+          { message: 'Missing from account field', status: 400 },
+          { status: 400 },
+        );
+      }
+    } else if (type === TransactionType.transfer) {
+      if (!fromAccountId) {
+        return NextResponse.json(
+          { message: 'Missing from account field', status: 400 },
+          { status: 400 },
+        );
+      }
+      if (!toAccountId) {
+        return NextResponse.json(
+          { message: 'Missing to account field', status: 400 },
+          { status: 400 },
+        );
+      }
+    }
+
     const transaction = await createTransaction(
       {
         merchant,
         amount: parseFloat(amount.toString()),
-        date: new Date(date),
-        fromAccountId,
-        toAccountId,
+        type,
+        fromAccountId: fromAccountId ?? undefined,
+        toAccountId: toAccountId ?? undefined,
         categoryId,
+        currency,
       },
       user.id,
     );

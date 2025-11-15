@@ -62,7 +62,7 @@ class FetchApi {
    * - Automatic no-store caching for sensitive endpoints
    */
   async request<T>(path: string, requestConfig: FetchRequestConfig = {}): Promise<T> {
-    const { method = 'GET', body, sensitive = false, ...rest } = requestConfig;
+    const { method = 'GET', body, sensitive = true, ...rest } = requestConfig;
 
     const headers: HeadersInit = {
       ...this.apiConfig.headers,

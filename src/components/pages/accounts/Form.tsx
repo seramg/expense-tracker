@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import FormInput from '@/components/forms/FormInput';
 import FormSelect from '@/components/forms/FormSelect';
 import { CURRENCY_TYPES, ACCOUNT_OPTIONS, CURRENCY_OPTIONS } from '@/constants/accounts';
+import { CurrencyType } from '@prisma/client';
 
 type AccountFormData = Yup.InferType<typeof AccountValidator>;
 
@@ -28,7 +29,7 @@ const AccountForm = ({ refetchList }: { refetchList?: () => void }) => {
     defaultValues: {
       name: '',
       balance: 0,
-      currency: 'INR',
+      currency: CurrencyType.INR,
     },
   });
   const { handleSubmit, reset } = form;

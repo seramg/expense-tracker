@@ -33,3 +33,20 @@ export async function getAccount(accountName?: string) {
   });
   return account;
 }
+
+//✅ Update account
+export async function updateAccount(
+  tx: Omit<typeof prisma, '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'>,
+  accountId?: string,
+  balance?: {
+    increment?: number;
+    decrement?: number;
+  },
+) {
+  return await tx.account.update({
+    where: { id: accountId },
+    data: {
+      balance,
+    },
+  });
+}

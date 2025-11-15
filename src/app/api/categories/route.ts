@@ -7,7 +7,7 @@ import {
   getAllCategories,
   getCategory,
 } from '@/app/controllers/categoryController';
-import { Category } from '@prisma/client';
+import { Category, TransactionType } from '@prisma/client';
 
 export const POST = async (req: Request) => {
   try {
@@ -82,7 +82,10 @@ export const GET = async (req: Request) => {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    const categories = await getAllCategories(user.id);
+    const { searchParams } = new URL(req.url);
+    const type = (searchParams.get('type') as TransactionType) ?? undefined;
+
+    const categories = await getAllCategories(user.id, type);
 
     return NextResponse.json(
       { message: 'All accounts fetched successfully', data: categories, status: 201 },

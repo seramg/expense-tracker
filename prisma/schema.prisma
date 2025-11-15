@@ -85,7 +85,8 @@ model Transaction {
   id       String          @id @default(uuid()) @map("_id")
   merchant String
   amount   Float
-  date     DateTime
+  type     TransactionType
+  currency CurrencyType @default(INR)
 
   user   User   @relation("User", fields: [userId], references: [id], onDelete: Cascade)
   userId String 

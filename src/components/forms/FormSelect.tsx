@@ -12,14 +12,16 @@ import {
 } from '@/components/ui/select';
 import { IOptions } from './forms.interface';
 import Image from 'next/image';
+import { Spinner } from '../ui/spinner';
 
 interface FormSelectProps {
   name: string;
   label: string;
-  options: IOptions[];
+  options?: IOptions[];
   placeholder?: string;
   required?: boolean;
   labelValue?: string;
+  isLoading?: boolean;
 }
 
 const FormSelect = ({
@@ -29,6 +31,7 @@ const FormSelect = ({
   placeholder,
   required,
   labelValue,
+  isLoading,
 }: FormSelectProps) => {
   const { control } = useFormContext();
   return (
@@ -39,28 +42,42 @@ const FormSelect = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Select onValueChange={field.onChange} value={field.value} required={required}>
+            <Select
+              disabled={isLoading || options === undefined || options?.length === 0}
+              onValueChange={field.onChange}
+              value={field.value}
+              required={required}
+            >
               <SelectTrigger>
-                <SelectValue placeholder={placeholder || `Select ${label}`} />
+                <SelectValue
+                  placeholder={
+                    <>
+                      {placeholder || `Select ${label}`}{' '}
+                      {isLoading ? <Spinner className='size-3' /> : null}
+                    </>
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{labelValue || `Select ${label}`}</SelectLabel>
-                  {options.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className='flex !gap-2'>
-                      {option.icon && (
-                        <div className='relative h-4 w-4'>
-                          <Image
-                            src={option.icon}
-                            alt={option.label}
-                            fill
-                            className='object-contain'
-                          />
-                        </div>
-                      )}
-                      {option.label}
-                    </SelectItem>
-                  ))}
+                  {!isLoading &&
+                    options &&
+                    options.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className='flex !gap-2'>
+                        {option.icon && (
+                          <div className='relative h-4 w-4'>
+                            <Image
+                              src={option.icon}
+                              alt={option.label}
+                              fill
+                              className='object-contain'
+                            />
+                          </div>
+                        )}
+                        {option.label}
+                      </SelectItem>
+                    ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

@@ -28,7 +28,7 @@ const AccountsList = () => {
     return (
       data?.data?.reduce((sum, account) => {
         const bal = account.balance ?? 0;
-        if (account.currency === 'USD') {
+        if (account.currency === CurrencyType.USD) {
           return sum + bal * usdToInrRate;
         } else {
           return sum + bal;
@@ -72,10 +72,10 @@ const AccountsList = () => {
 
                 <h3 className='text-xl font-semibold uppercase'>{acc.name}</h3>
                 <h3 className='mt-20 flex gap-2 text-3xl font-semibold break-all uppercase'>
-                  {getCurrencyOption(acc.currency)?.value === 'INR' && (
+                  {getCurrencyOption(acc.currency)?.value === CurrencyType.INR && (
                     <INRIcon className='h-full max-h-8 w-full max-w-8 text-white' />
                   )}
-                  {getCurrencyOption(acc.currency)?.value === 'USD' && (
+                  {getCurrencyOption(acc.currency)?.value === CurrencyType.USD && (
                     <USDIcon className='h-full max-h-8 w-full max-w-8 text-white' />
                   )}
                   {formatAccount(acc.balance ?? 0)}

@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma/prisma';
 import { ICategory } from '@/lib/types/category';
+import { TransactionType } from '@prisma/client';
 
 // ✅ Create category
 export async function createCategory(categoryData: ICategory, userId?: string) {
@@ -15,10 +16,10 @@ export async function createCategory(categoryData: ICategory, userId?: string) {
   return category;
 }
 // ✅ Get all categories
-export async function getAllCategories(userId?: string) {
+export async function getAllCategories(userId?: string, type?: TransactionType) {
   // Prisma validates this based on your schema
   const categories = await prisma.category.findMany({
-    where: { userId },
+    where: { userId, type },
     orderBy: { createdAt: 'desc' },
   });
   return categories;
