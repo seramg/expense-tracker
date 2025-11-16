@@ -124,6 +124,10 @@ const TransactionForm = ({ refetchList }: { refetchList?: () => void }) => {
                 required
                 options={accountListOptions}
                 isLoading={accountListLoading}
+                itemProps={accountList?.data?.map((account) => ({
+                  disabled: account.balance === 0,
+                  title: account.balance === 0 ? 'Balance is 0' : undefined,
+                }))}
               />
             )}
             {categoryType != undefined && categoryType !== TransactionType.debit && (

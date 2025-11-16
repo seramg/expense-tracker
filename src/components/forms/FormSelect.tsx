@@ -22,6 +22,10 @@ interface FormSelectProps {
   required?: boolean;
   labelValue?: string;
   isLoading?: boolean;
+  itemProps?: {
+    disabled?: boolean;
+    title?: string;
+  }[];
 }
 
 const FormSelect = ({
@@ -32,6 +36,7 @@ const FormSelect = ({
   required,
   labelValue,
   isLoading,
+  itemProps,
 }: FormSelectProps) => {
   const { control } = useFormContext();
   return (
@@ -63,8 +68,13 @@ const FormSelect = ({
                   <SelectLabel>{labelValue || `Select ${label}`}</SelectLabel>
                   {!isLoading &&
                     options &&
-                    options.map((option) => (
-                      <SelectItem key={option.value} value={option.value} className='flex !gap-2'>
+                    options.map((option, index) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className='flex !gap-2'
+                        {...itemProps?.[index]}
+                      >
                         {option.icon && (
                           <div className='relative h-4 w-4'>
                             <Image

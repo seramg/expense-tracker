@@ -3,7 +3,7 @@ import { ITransaction } from '@/lib/types/transaction';
 import { CurrencyType, TransactionType } from '@prisma/client';
 import { updateAccount } from './accountController';
 import { fetchUSDToINR } from '@/lib/fetchCurrency';
-import { convertUSDToINR } from '@/utils/formatAmount';
+import { convertToCurrency, convertUSDToINR } from '@/utils/formatAmount';
 
 // ✅ Create transaction
 async function createTransactionInstance(
@@ -39,6 +39,13 @@ async function createTransactionInstance(
 }
 export async function createTransaction(transactionData: ITransaction, userId?: string) {
   return await prisma.$transaction(async (tx) => {
+    const fromAccount = transactionData.fromAccountId
+      ? await prisma.account.findUnique({ where: { id: transactionData.fromAccountId } })
+      : null;
+
+    const toAccount = transactionData.toAccountId
+      ? await prisma.account.findUnique({ where: { id: transactionData.toAccountId } })
+      : null;
     /*If you did:
     const t = await prisma.transaction.create(...)
     await prisma.account.update(...)
@@ -50,15 +57,20 @@ export async function createTransaction(transactionData: ITransaction, userId?: 
 
     // 1️⃣ Create the transaction
     const transaction = await createTransactionInstance(tx, transactionData, userId);
+    const transactionAmount = transaction.amount;
+    const currency = transaction.currency;
 
     // 2️⃣ Update account balances based on type
-    const amount = await convertUSDToINR(transaction.amount, transaction.currency);
 
     if (transactionData.type === TransactionType.credit && transactionData.toAccountId) {
+      const amount = await convertToCurrency(transactionAmount, currency, toAccount?.currency);
+
       await updateAccount(tx, transactionData.toAccountId!, { increment: amount });
     }
 
     if (transactionData.type === TransactionType.debit && transactionData.fromAccountId) {
+      const amount = await convertToCurrency(transactionAmount, currency, fromAccount?.currency);
+
       await updateAccount(tx, transactionData.fromAccountId!, { decrement: amount });
     }
 
@@ -66,8 +78,20 @@ export async function createTransaction(transactionData: ITransaction, userId?: 
       transactionData.type === TransactionType.transfer &&
       (transactionData.fromAccountId || transactionData.toAccountId)
     ) {
-      await updateAccount(tx, transactionData.fromAccountId!, { decrement: amount });
-      await updateAccount(tx, transactionData.toAccountId!, { increment: amount });
+      const debitAmount = await convertToCurrency(
+        transactionAmount,
+        currency,
+        fromAccount?.currency,
+      );
+
+      await updateAccount(tx, transactionData.fromAccountId!, { decrement: debitAmount });
+      const creditAmount = await convertToCurrency(
+        transactionAmount,
+        currency,
+        toAccount?.currency,
+      );
+
+      await updateAccount(tx, transactionData.toAccountId!, { increment: creditAmount });
     }
 
     return transaction;

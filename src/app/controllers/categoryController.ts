@@ -29,17 +29,22 @@ export async function getAllCategories(userId?: string, type?: TransactionType) 
     },
   });
 
-  const categoriesWithTotal = categories.map((category) => {
-    let result = 0;
-    category.transactions.forEach(async (transaction) => {
-      const convertedAmt = await convertUSDToINR(transaction.amount, transaction.currency);
-      result += convertedAmt;
-    });
-    return {
-      ...category,
-      totalAmount: result,
-    };
-  });
+  const categoriesWithTotal = await Promise.all(
+    categories.map(async (category) => {
+      const total = await Promise.all(
+        category.transactions.map(async (transaction) => {
+          const convertedAmt = await convertUSDToINR(transaction.amount, transaction.currency);
+          return convertedAmt;
+        }),
+      );
+      const result = total.reduce((acc, val) => acc + val, 0);
+
+      return {
+        ...category,
+        totalAmount: result,
+      };
+    }),
+  );
 
   return categoriesWithTotal;
 }
