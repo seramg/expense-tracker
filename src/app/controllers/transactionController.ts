@@ -1,7 +1,9 @@
 import prisma from '@/lib/prisma/prisma';
 import { ITransaction } from '@/lib/types/transaction';
-import { TransactionType } from '@prisma/client';
+import { CurrencyType, TransactionType } from '@prisma/client';
 import { updateAccount } from './accountController';
+import { fetchUSDToINR } from '@/lib/fetchCurrency';
+import { convertUSDToINR } from '@/utils/formatAmount';
 
 // ✅ Create transaction
 async function createTransactionInstance(
@@ -50,7 +52,7 @@ export async function createTransaction(transactionData: ITransaction, userId?: 
     const transaction = await createTransactionInstance(tx, transactionData, userId);
 
     // 2️⃣ Update account balances based on type
-    const amount = transactionData.amount;
+    const amount = await convertUSDToINR(transaction.amount, transaction.currency);
 
     if (transactionData.type === TransactionType.credit && transactionData.toAccountId) {
       await updateAccount(tx, transactionData.toAccountId!, { increment: amount });

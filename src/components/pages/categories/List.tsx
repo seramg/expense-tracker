@@ -14,6 +14,7 @@ import { ICategory } from '@/lib/types/category';
 import React from 'react';
 import CategoryForm from './Form';
 import { CATEGORY_OPTIONS } from '@/constants/categories';
+import AmountWithCurrencyIcon from '@/components/atoms/AmountWithCurrencyIcon';
 
 const CategoryList = () => {
   const { data, isLoading, error, refetch } = useGetQuery<ICategory[]>(`/api/categories`);
@@ -46,7 +47,9 @@ const CategoryList = () => {
                   <TableCell>
                     {CATEGORY_OPTIONS.find((option) => option.value === category.type)?.label}
                   </TableCell>
-                  <TableCell className='text-right'>{0}</TableCell>
+                  <TableCell className='text-right'>
+                    <AmountWithCurrencyIcon amount={category.totalAmount} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -8,9 +8,10 @@ import { AccountType, CurrencyType } from '@prisma/client';
 import Image from 'next/image';
 import INRIcon from '@/constants/icons/INR';
 import USDIcon from '@/constants/icons/USD';
-import formatAccount from '@/utils/formatAmount';
 import colors from './accounts.constants';
 import useUSDToINRRate from '@/hooks/useUSDToINRRate';
+import AmountWithCurrencyIcon from '@/components/atoms/AmountWithCurrencyIcon';
+import { formatAmount } from '@/utils/formatAmount';
 
 const AccountsList = () => {
   const usdToInrRate = useUSDToINRRate();
@@ -21,8 +22,6 @@ const AccountsList = () => {
 
   const getAccountOption = (type: AccountType) =>
     ACCOUNT_OPTIONS.find((accountOption) => accountOption.value === type);
-  const getCurrencyOption = (type: CurrencyType) =>
-    CURRENCY_OPTIONS.find((currencyOption) => currencyOption.value === type);
 
   const getBalance = () => {
     return (
@@ -50,7 +49,7 @@ const AccountsList = () => {
           <div className='mt-5 flex items-center text-xl font-bold'>
             <h2 className='mr-2'>Total Balance:</h2>
             <INRIcon className='h-6 w-6' />
-            <h2>{formatAccount(getBalance())}</h2>
+            <h2>{formatAmount(getBalance())}</h2>
           </div>
           <ul className='xs:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] mt-10 grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data?.data?.map((acc, index) => (
@@ -72,13 +71,11 @@ const AccountsList = () => {
 
                 <h3 className='text-xl font-semibold uppercase'>{acc.name}</h3>
                 <h3 className='mt-20 flex gap-2 text-3xl font-semibold break-all uppercase'>
-                  {getCurrencyOption(acc.currency)?.value === CurrencyType.INR && (
-                    <INRIcon className='h-full max-h-8 w-full max-w-8 text-white' />
-                  )}
-                  {getCurrencyOption(acc.currency)?.value === CurrencyType.USD && (
-                    <USDIcon className='h-full max-h-8 w-full max-w-8 text-white' />
-                  )}
-                  {formatAccount(acc.balance ?? 0)}
+                  <AmountWithCurrencyIcon
+                    iconClassName='!max-w-8 !max-h-8'
+                    currency={acc.currency}
+                    amount={acc.balance}
+                  />
                 </h3>
               </li>
             ))}
